@@ -490,6 +490,94 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
   border-bottom-color: rgba(168, 85, 247, 0.7);
 }
 
+.platform-card.platform-card--youtube {
+  background: linear-gradient(180deg, rgba(60, 180, 230, 0.16), rgba(30, 120, 180, 0.22));
+  border: 1px solid rgba(60, 180, 230, 0.3);
+  box-shadow: 0 20px 44px rgba(60, 180, 230, 0.14);
+}
+
+.platform-card.platform-card--youtube .platform-icon.platform-icon--brand {
+  background: linear-gradient(135deg, #3CB4E6 0%, #1E78B4 100%);
+}
+
+.platform-card.platform-card--youtube .platform-handle {
+  cursor: pointer;
+  color: #7DD3FC;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(60, 180, 230, 0.4);
+  transition: all 0.15s ease;
+}
+
+.platform-card.platform-card--youtube .platform-handle:hover {
+  color: #BAE6FD;
+  border-bottom-color: rgba(60, 180, 230, 0.7);
+}
+
+.yt-user-selector {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  padding: 20px;
+}
+
+.yt-user-selector.active {
+  display: flex;
+}
+
+.yt-user-selector-content {
+  background: #0d0e10;
+  border: 1px solid rgba(60, 180, 230, 0.3);
+  border-radius: 18px;
+  padding: 24px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+.yt-selector-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.yt-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.yt-selector-item {
+  padding: 12px 14px;
+  background: rgba(60, 180, 230, 0.08);
+  border: 1px solid rgba(60, 180, 230, 0.2);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.yt-selector-item:hover {
+  background: rgba(60, 180, 230, 0.15);
+  border-color: rgba(60, 180, 230, 0.4);
+  color: #BAE6FD;
+}
+
+.yt-selector-item.active {
+  background: linear-gradient(135deg, #3CB4E6 0%, #1E78B4 100%);
+  border-color: #3CB4E6;
+  color: #FFF;
+}
+
 .ig-user-selector {
   position: fixed;
   inset: 0;
@@ -553,6 +641,77 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
   background: linear-gradient(135deg, #A855F7 0%, #6B21A8 100%);
   border-color: #A855F7;
   color: #FFF;
+}
+
+.dropship-card {
+  background: linear-gradient(180deg, rgba(100, 200, 255, 0.12), rgba(50, 150, 200, 0.16));
+  border: 1px solid rgba(100, 200, 255, 0.25);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.dropship-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.dropship-stat-item {
+  background: rgba(100, 200, 255, 0.08);
+  border: 1px solid rgba(100, 200, 255, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.dropship-stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.dropship-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #7DD3FC;
+}
+
+.dropship-divider {
+  height: 1px;
+  background: rgba(100, 200, 255, 0.15);
+  margin: 20px 0;
+}
+
+.dropship-sellers-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.dropship-seller-box {
+  background: rgba(100, 200, 255, 0.06);
+  border: 1px solid rgba(100, 200, 255, 0.15);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.dropship-seller-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.dropship-seller-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #7DD3FC;
 }
 
 .platform-stats {
@@ -2390,6 +2549,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <span class="bot-tab-icon">✨</span>
     <span class="bot-tab-label">Nova</span>
   </button>
+  <button class="bot-tab" data-tab="businesses">
+    <span class="bot-tab-icon">💼</span>
+    <span class="bot-tab-label">Businesses</span>
+  </button>
 </nav>
 
 <!-- ===== SOCIALS ===== -->
@@ -2403,20 +2566,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   </div>
   <div class="card socials-grid">
     <div class="grid-2">
-      <div class="platform-card">
+      <div class="platform-card platform-card--youtube" id="ytCard">
         <div class="platform-header">
           <div class="platform-icon platform-icon--brand" aria-hidden="true">
             <span class="platform-mark">SL</span>
           </div>
           <div>
             <div class="platform-name">YouTube</div>
-            <div class="platform-handle">@yourchannel</div>
+            <div class="platform-handle" id="ytHandleBtn">@yourchannel</div>
           </div>
         </div>
         <div class="platform-stats">
           <div class="platform-stat"><span>Followers</span><strong id="ytFollowers">—</strong></div>
           <div class="platform-stat"><span>Views</span><strong id="ytViews">—</strong></div>
           <div class="platform-stat"><span>Revenue</span><strong id="ytRevenue">—</strong></div>
+        </div>
+      </div>
+      <div class="yt-user-selector" id="ytUserSelector">
+        <div class="yt-user-selector-content">
+          <div class="yt-selector-title">Select YouTube Channel</div>
+          <div class="yt-selector-list" id="ytUserList"></div>
         </div>
       </div>
       <div class="platform-card platform-card--instagram" id="igCard">
@@ -2444,6 +2613,45 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     </div>
     <p class="section-note">Use the fields above to record social channel followers, views, and revenue for creator finance tracking.</p>
   </div>
+</div>
+
+<!-- ===== BUSINESSES ===== -->
+<div class="section" data-section="businesses" hidden>
+  <div class="section-title">
+    <span class="section-title-text">BUSINESSES · VENTURES</span>
+  </div>
+  <div class="card">
+    <h2 class="card-title">Dropship</h2>
+    <p class="card-copy">Track your dropshipping business metrics: items sold, best and worst sellers, revenue, and profit.</p>
+  </div>
+  <div class="card dropship-card">
+    <div class="dropship-stat-row">
+      <div class="dropship-stat-item">
+        <div class="dropship-stat-label">Items Sold</div>
+        <div class="dropship-stat-value" id="dropshipItemsSold">0</div>
+      </div>
+      <div class="dropship-stat-item">
+        <div class="dropship-stat-label">Revenue</div>
+        <div class="dropship-stat-value" id="dropshipRevenue">CHF 0</div>
+      </div>
+      <div class="dropship-stat-item">
+        <div class="dropship-stat-label">Profit</div>
+        <div class="dropship-stat-value" id="dropshipProfit">CHF 0</div>
+      </div>
+    </div>
+    <div class="dropship-divider"></div>
+    <div class="dropship-sellers-row">
+      <div class="dropship-seller-box">
+        <div class="dropship-seller-label">Best Seller</div>
+        <div class="dropship-seller-name" id="dropshipBestSeller">—</div>
+      </div>
+      <div class="dropship-seller-box">
+        <div class="dropship-seller-label">Worst Seller</div>
+        <div class="dropship-seller-name" id="dropshipWorstSeller">—</div>
+      </div>
+    </div>
+  </div>
+  <p class="section-note">Enter your dropshipping metrics above to track your business performance at a glance.</p>
 </div>
 
 <script>
@@ -2970,7 +3178,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   tabs.forEach(b => b.addEventListener('click', () => setActiveTab(b.dataset.tab)));
   const savedTab = storeGet(TAB_KEY);
-  setActiveTab(savedTab && ['net','subs','incoming','wish','socials','nova'].includes(savedTab) ? savedTab : 'net');
+  setActiveTab(savedTab && ['net','subs','incoming','wish','socials','nova','businesses'].includes(savedTab) ? savedTab : 'net');
 
   // ============================================================
   // INSTAGRAM USER SELECTOR
@@ -3050,6 +3258,113 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   
   // Initialize when socials section is visible
   setTimeout(initInstagramSelector, 100);
+
+  // ============================================================
+  // YOUTUBE USER SELECTOR
+  // ============================================================
+  const YT_USERS_KEY = 'yt_users';
+  const YT_CURRENT_KEY = 'yt_current_user';
+  const defaultYTUsers = [
+    { handle: '@yourchannel', followers: '45.2K', views: '1.2M', revenue: '$3,450' },
+    { handle: '@tech_reviews', followers: '28.5K', views: '856K', revenue: '$1,890' },
+    { handle: '@gaming_hub', followers: '62K', views: '2.1M', revenue: '$5,200' }
+  ];
+  
+  function initYoutubeSelector() {
+    const ytHandleBtn = document.getElementById('ytHandleBtn');
+    const ytUserSelector = document.getElementById('ytUserSelector');
+    const ytUserList = document.getElementById('ytUserList');
+    const ytFollowers = document.getElementById('ytFollowers');
+    const ytViews = document.getElementById('ytViews');
+    const ytRevenue = document.getElementById('ytRevenue');
+    
+    if (!ytHandleBtn || !ytUserSelector) return;
+    
+    const users = storeGet(YT_USERS_KEY) || defaultYTUsers;
+    const currentIdx = Number(storeGet(YT_CURRENT_KEY)) || 0;
+    
+    // Render current user data
+    function renderYTCurrent() {
+      const user = users[currentIdx];
+      if (user) {
+        ytHandleBtn.textContent = user.handle;
+        if (ytFollowers) ytFollowers.textContent = user.followers;
+        if (ytViews) ytViews.textContent = user.views;
+        if (ytRevenue) ytRevenue.textContent = user.revenue;
+      }
+    }
+    
+    // Render user list
+    function renderYTList() {
+      ytUserList.innerHTML = users.map((u, i) => 
+        `<div class="yt-selector-item${i === currentIdx ? ' active' : ''}" data-idx="${i}">${u.handle}</div>`
+      ).join('');
+      
+      ytUserList.querySelectorAll('.yt-selector-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const idx = Number(item.dataset.idx);
+          storeSet(YT_CURRENT_KEY, idx);
+          renderYTList();
+          renderYTCurrent();
+          setTimeout(() => ytUserSelector.classList.remove('active'), 150);
+        });
+      });
+    }
+    
+    // Click handle to show selector
+    ytHandleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      ytUserSelector.classList.add('active');
+    });
+    
+    // Close selector on outside click
+    ytUserSelector.addEventListener('click', (e) => {
+      if (e.target === ytUserSelector) {
+        ytUserSelector.classList.remove('active');
+      }
+    });
+    
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && ytUserSelector.classList.contains('active')) {
+        ytUserSelector.classList.remove('active');
+      }
+    });
+    
+    renderYTCurrent();
+    renderYTList();
+  }
+  
+  setTimeout(initYoutubeSelector, 100);
+
+  // ============================================================
+  // BUSINESSES — DROPSHIP
+  // ============================================================
+  const DROPSHIP_KEY = 'dropship_data';
+  const defaultDropship = {
+    itemsSold: 156,
+    revenue: 8750,
+    profit: 2340,
+    bestSeller: 'Wireless Headphones',
+    worstSeller: 'Phone Cases'
+  };
+  
+  function renderDropship() {
+    const data = storeGet(DROPSHIP_KEY) || defaultDropship;
+    const itemsSoldEl = document.getElementById('dropshipItemsSold');
+    const revenueEl = document.getElementById('dropshipRevenue');
+    const profitEl = document.getElementById('dropshipProfit');
+    const bestSellerEl = document.getElementById('dropshipBestSeller');
+    const worstSellerEl = document.getElementById('dropshipWorstSeller');
+    
+    if (itemsSoldEl) itemsSoldEl.textContent = data.itemsSold || 0;
+    if (revenueEl) revenueEl.textContent = 'CHF ' + (data.revenue || 0).toLocaleString('de-CH', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+    if (profitEl) profitEl.textContent = 'CHF ' + (data.profit || 0).toLocaleString('de-CH', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+    if (bestSellerEl) bestSellerEl.textContent = data.bestSeller || '—';
+    if (worstSellerEl) worstSellerEl.textContent = data.worstSeller || '—';
+  }
+  
+  setTimeout(renderDropship, 100);
 
   // ============================================================
   // NET WORTH (copied from the main dashboard, verbatim logic)
