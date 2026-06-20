@@ -398,10 +398,38 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
   pointer-events: none;
 }
-.card-grid {
+..card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 10px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mini-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+}
+
+.mini-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.section-note {
+  margin-top: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
 }
 
 /* Tag pills */
@@ -2181,11 +2209,39 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <span class="bot-tab-icon">🎯</span>
     <span class="bot-tab-label">Wishlist</span>
   </button>
+  <button class="bot-tab" data-tab="socials">
+    <span class="bot-tab-icon">🌐</span>
+    <span class="bot-tab-label">Socials</span>
+  </button>
   <button class="bot-tab" data-tab="nova">
     <span class="bot-tab-icon">✨</span>
     <span class="bot-tab-label">Nova</span>
   </button>
 </nav>
+
+<!-- ===== SOCIALS ===== -->
+<div class="section" data-section="socials" hidden>
+  <div class="section-title">
+    <span class="section-title-text">SOCIALS · COMMUNITY</span>
+  </div>
+  <div class="card">
+    <h2 class="card-title">Socials Hub</h2>
+    <p class="card-copy">Track your online communities, creator support, audience subscriptions, and the socials costs that matter to your personal finance goals.</p>
+  </div>
+  <div class="card">
+    <div class="grid-2">
+      <div>
+        <div class="mini-title">Follower count</div>
+        <div class="mini-value" id="socialsFollowers">—</div>
+      </div>
+      <div>
+        <div class="mini-title">Monthly support</div>
+        <div class="mini-value" id="socialsSupport">—</div>
+      </div>
+    </div>
+    <p class="section-note">Use this page as a placeholder for social media cost tracking and creator economy insights.</p>
+  </div>
+</div>
 
 <script>
 (function() {
@@ -2711,7 +2767,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   tabs.forEach(b => b.addEventListener('click', () => setActiveTab(b.dataset.tab)));
   const savedTab = storeGet(TAB_KEY);
-  setActiveTab(savedTab && ['net','subs','incoming','wish','nova'].includes(savedTab) ? savedTab : 'net');
+  setActiveTab(savedTab && ['net','subs','incoming','wish','socials','nova'].includes(savedTab) ? savedTab : 'net');
 
   // ============================================================
   // NET WORTH (copied from the main dashboard, verbatim logic)
