@@ -2149,7 +2149,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:14px">
       <div>
         <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;font-weight:500">Total net worth</div>
-        <div id="netWorthTotal" style="font-size:34px;font-weight:700;color:var(--text-primary);line-height:1.05;margin-top:2px">CHF 0</div>
+        <div id="netWorthTotal" style="font-size:34px;font-weight:700;color:var(--text-primary);line-height:1.05;margin-top:2px">0 CHF</div>
         <div id="netWorthBreakdown" style="font-size:11px;color:var(--text-tertiary);margin-top:4px"></div>
       </div>
       <div style="display:flex;align-items:center;gap:6px">
@@ -2371,7 +2371,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:12px">
       <div>
         <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;font-weight:500">Monthly burn</div>
-        <div id="subsTotal" style="font-size:28px;font-weight:700;color:var(--text-primary);line-height:1.1;margin-top:2px">CHF 0 <span style="font-size:13px;color:var(--text-tertiary);font-weight:500">/ mo</span></div>
+        <div id="subsTotal" style="font-size:28px;font-weight:700;color:var(--text-primary);line-height:1.1;margin-top:2px">0 CHF <span style="font-size:13px;color:var(--text-tertiary);font-weight:500">/ mo</span></div>
         <div id="subsYearly" style="font-size:11px;color:var(--text-tertiary);margin-top:2px"></div>
       </div>
       <div id="subsCount" style="font-size:11px;color:var(--text-tertiary)"></div>
@@ -2456,7 +2456,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div class="wish-hero-top">
       <div>
         <div class="wish-hero-eyebrow">WISHLIST TOTAL</div>
-        <div class="wish-hero-num" id="wishTotal">CHF 0</div>
+        <div class="wish-hero-num" id="wishTotal">0 CHF</div>
       </div>
       <div class="wish-hero-pct-wrap">
         <div class="wish-hero-pct-label">% OF NET WORTH</div>
@@ -2500,29 +2500,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 </div>
 
-<!-- ===== NOVA — AI money coach ===== -->
-<div class="section" data-section="nova" hidden>
-  <div class="section-title">
-    <span class="section-title-text">NOVA · MONEY COACH</span>
-  </div>
-  <div class="card nova-wrap">
-    <div class="nova-messages" id="novaMessages">
-      <div class="nova-msg nova-msg-nova">Hey — I'm Nova, your money coach. I can see your net worth, subscriptions, incoming orders and wishlist. Ask me anything, or tap a starter below.</div>
-    </div>
-    <div class="nova-suggestions" id="novaSuggestions">
-      <button class="nova-chip" data-q="How am I doing financially? Give me a quick read on my net worth.">How am I doing?</button>
-      <button class="nova-chip" data-q="Where can I realistically cut back on my spending?">Where can I cut back?</button>
-      <button class="nova-chip" data-q="Can I afford everything on my wishlist right now?">Afford my wishlist?</button>
-      <button class="nova-chip" data-q="Which of my subscriptions should I review or cancel?">Review my subs</button>
-    </div>
-    <div class="nova-composer">
-      <textarea id="novaInput" class="nova-input" rows="1" placeholder="Ask Nova about your money…"></textarea>
-      <button id="novaSend" class="nova-send" aria-label="Send message">→</button>
-    </div>
-    <div class="nova-disclaimer">Nova gives general guidance, not regulated financial advice.</div>
-  </div>
-</div>
-
 <!-- ===== BOTTOM TAB BAR ===== -->
 <nav class="bottom-tabs" id="bottomTabs" aria-label="Sections">
   <button class="bot-tab active" data-tab="net">
@@ -2544,10 +2521,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   <button class="bot-tab" data-tab="socials">
     <span class="bot-tab-icon">🌐</span>
     <span class="bot-tab-label">Socials</span>
-  </button>
-  <button class="bot-tab" data-tab="nova">
-    <span class="bot-tab-icon">✨</span>
-    <span class="bot-tab-label">Nova</span>
   </button>
   <button class="bot-tab" data-tab="businesses">
     <span class="bot-tab-icon">💼</span>
@@ -2632,11 +2605,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       </div>
       <div class="dropship-stat-item">
         <div class="dropship-stat-label">Revenue</div>
-        <div class="dropship-stat-value" id="dropshipRevenue">CHF 0</div>
+        <div class="dropship-stat-value" id="dropshipRevenue">0 CHF</div>
       </div>
       <div class="dropship-stat-item">
         <div class="dropship-stat-label">Profit</div>
-        <div class="dropship-stat-value" id="dropshipProfit">CHF 0</div>
+        <div class="dropship-stat-value" id="dropshipProfit">0 CHF</div>
       </div>
     </div>
     <div class="dropship-divider"></div>
@@ -3178,7 +3151,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   tabs.forEach(b => b.addEventListener('click', () => setActiveTab(b.dataset.tab)));
   const savedTab = storeGet(TAB_KEY);
-  setActiveTab(savedTab && ['net','subs','incoming','wish','socials','nova','businesses'].includes(savedTab) ? savedTab : 'net');
+  setActiveTab(savedTab && ['net','subs','incoming','wish','socials','businesses'].includes(savedTab) ? savedTab : 'net');
 
   // ============================================================
   // INSTAGRAM USER SELECTOR
@@ -3356,10 +3329,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const profitEl = document.getElementById('dropshipProfit');
     const bestSellerEl = document.getElementById('dropshipBestSeller');
     const worstSellerEl = document.getElementById('dropshipWorstSeller');
+    const symbol = currencyEl ? currencyEl.value : 'CHF';
     
     if (itemsSoldEl) itemsSoldEl.textContent = data.itemsSold || 0;
-    if (revenueEl) revenueEl.textContent = 'CHF ' + (data.revenue || 0).toLocaleString('de-CH', {minimumFractionDigits: 0, maximumFractionDigits: 0});
-    if (profitEl) profitEl.textContent = 'CHF ' + (data.profit || 0).toLocaleString('de-CH', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+    if (revenueEl) revenueEl.textContent = (data.revenue || 0).toLocaleString('de-CH', {minimumFractionDigits: 0, maximumFractionDigits: 0}) + ' ' + symbol;
+    if (profitEl) profitEl.textContent = (data.profit || 0).toLocaleString('de-CH', {minimumFractionDigits: 0, maximumFractionDigits: 0}) + ' ' + symbol;
     if (bestSellerEl) bestSellerEl.textContent = data.bestSeller || '—';
     if (worstSellerEl) worstSellerEl.textContent = data.worstSeller || '—';
   }
@@ -3403,7 +3377,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const symbol = currencyEl ? currencyEl.value : 'CHF';
     const rate = exchangeRates[symbol] || 1;
     const num = (Number(amountCHF) || 0) * rate;
-    return symbol + ' ' + num.toLocaleString('en-US', { minimumFractionDigits: num % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 });
+    return num.toLocaleString('en-US', { minimumFractionDigits: num % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 }) + ' ' + symbol;
   }
 
   function renderNetWorthCategory(cat) {
