@@ -21,6 +21,88 @@
 
   // -------- CSS --------
   const css = `
+/* === Global mountains background === */
+html, body {
+  background: transparent !important;
+}
+body::before,
+body::after {
+  display: none !important;
+}
+.site-background {
+  position: fixed;
+  inset: 0;
+  z-index: -100;
+  overflow: hidden;
+  pointer-events: none;
+  background: #04060a;
+}
+.site-background, .site-background * {
+  box-sizing: border-box;
+}
+.site-background .aurora {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 50% at 50% 48%,
+      rgba(110, 231, 183, 0.22) 0%,
+      rgba(110, 231, 183, 0.08) 30%,
+      rgba(110, 231, 183, 0) 65%),
+    radial-gradient(28% 22% at 50% 50%,
+      rgba(255, 226, 181, 0.10) 0%,
+      rgba(255, 226, 181, 0) 70%),
+    radial-gradient(120% 80% at 50% 100%,
+      rgba(14, 38, 30, 0.85) 0%,
+      rgba(4, 6, 10, 1) 70%);
+}
+.site-background .mountains {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  height: 38vh;
+  min-height: 220px;
+}
+.site-background .mountains svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.site-background .mist {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 28vh;
+  height: 22vh;
+  z-index: 2;
+  background: linear-gradient(to top,
+    rgba(4, 6, 10, 0) 0%,
+    rgba(110, 231, 183, 0.06) 40%,
+    rgba(4, 6, 10, 0) 100%);
+  filter: blur(8px);
+}
+.site-background .particles {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+}
+.site-background .particles span {
+  position: absolute;
+  width: 1.5px;
+  height: 1.5px;
+  background: rgba(233, 239, 233, 0.55);
+  border-radius: 50%;
+  box-shadow: 0 0 4px rgba(167, 243, 208, 0.35);
+  animation: bg-drift linear infinite;
+}
+@keyframes bg-drift {
+  0%   { transform: translate3d(0, 0, 0); opacity: 0; }
+  8%   { opacity: 0.7; }
+  92%  { opacity: 0.5; }
+  100% { transform: translate3d(var(--dx, 12px), var(--dy, -100vh), 0); opacity: 0; }
+}
+
 .topbar {
   position: sticky; top: 0; z-index: 40;
   display: flex; justify-content: flex-end; align-items: center;
@@ -210,6 +292,38 @@ body.topbar-modal-open {
 </header>
 `;
 
+  const backgroundHtml = `
+<div id="siteBackground" class="site-background" aria-hidden="true">
+  <div class="aurora"></div>
+  <div class="mountains" aria-hidden="true">
+    <svg viewBox="0 0 1600 420" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="mt-far" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0d1a17" stop-opacity="0" />
+          <stop offset="55%" stop-color="#0d1a17" stop-opacity=".55" />
+          <stop offset="100%" stop-color="#0d1a17" stop-opacity=".95" />
+        </linearGradient>
+        <linearGradient id="mt-near" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#050a09" stop-opacity=".4" />
+          <stop offset="60%" stop-color="#050a09" stop-opacity=".95" />
+          <stop offset="100%" stop-color="#050a09" stop-opacity="1" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M0,300 L120,230 L210,260 L320,180 L430,220 L560,150 L680,210 L820,170 L960,220 L1100,180 L1240,240 L1380,200 L1500,250 L1600,220 L1600,420 L0,420 Z"
+        fill="url(#mt-far)"
+      />
+      <path
+        d="M0,360 L100,320 L220,340 L340,290 L460,330 L590,300 L720,340 L860,310 L1000,350 L1140,310 L1280,355 L1420,320 L1540,360 L1600,340 L1600,420 L0,420 Z"
+        fill="url(#mt-near)"
+      />
+    </svg>
+  </div>
+  <div class="mist"></div>
+  <div class="particles" id="backgroundParticles"></div>
+</div>
+`;
+
   const bottombarHtml = `
 <nav class="bottombar" id="bottombar" role="navigation" aria-label="Main tabs">
   <a href="index.html" class="bottombar-tab" data-page="main">
@@ -274,6 +388,40 @@ body.topbar-modal-open {
     // Reserve room above the fixed bottom bar so page content can scroll
     // past it without being hidden.
     document.body.classList.add('has-bottombar');
+  }
+
+  function injectBackground() {
+    if (document.getElementById('siteBackground')) return;
+    if (!document.getElementById('topbar-style')) {
+      const style = document.createElement('style');
+      style.id = 'topbar-style';
+      style.textContent = css;
+      document.head.appendChild(style);
+    }
+
+    const bgWrap = document.createElement('div');
+    bgWrap.innerHTML = backgroundHtml.trim();
+    document.body.insertBefore(bgWrap.firstChild, document.body.firstChild);
+    spawnBackgroundParticles();
+  }
+
+  function spawnBackgroundParticles() {
+    const root = document.getElementById('backgroundParticles');
+    if (!root) return;
+    const count = window.innerWidth < 640 ? 10 : 18;
+    for (let i = 0; i < count; i += 1) {
+      const span = document.createElement('span');
+      const dur = 18 + Math.random() * 22;
+      span.style.left = Math.random() * 100 + '%';
+      span.style.top = 60 + Math.random() * 40 + 'vh';
+      const size = 1 + Math.random() * 1.2;
+      span.style.width = span.style.height = size + 'px';
+      span.style.animationDuration = dur + 's';
+      span.style.animationDelay = (-Math.random() * dur) + 's';
+      span.style.setProperty('--dx', (Math.random() * 30 - 15) + 'px');
+      span.style.setProperty('--dy', (-(60 + Math.random() * 50)) + 'vh');
+      root.appendChild(span);
+    }
   }
 
   // -------- Active-date helpers (match the goals page 6 AM rollover) --------
@@ -464,6 +612,7 @@ body.topbar-modal-open {
 
   // -------- Boot --------
   function boot() {
+    injectBackground();
     injectStyleAndHTML();
     const btn = document.getElementById('topbarWaterAdd');
     if (btn) btn.addEventListener('click', (e) => { e.preventDefault(); addWater(); });
