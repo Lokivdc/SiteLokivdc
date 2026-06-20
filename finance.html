@@ -467,6 +467,94 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
   color: var(--text-tertiary);
 }
 
+.platform-card.platform-card--instagram {
+  background: linear-gradient(180deg, rgba(168, 85, 247, 0.16), rgba(88, 28, 135, 0.22));
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  box-shadow: 0 20px 44px rgba(168, 85, 247, 0.14);
+}
+
+.platform-card.platform-card--instagram .platform-icon.platform-icon--brand {
+  background: linear-gradient(135deg, #A855F7 0%, #6B21A8 100%);
+}
+
+.platform-card.platform-card--instagram .platform-handle {
+  cursor: pointer;
+  color: #A78BFA;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.4);
+  transition: all 0.15s ease;
+}
+
+.platform-card.platform-card--instagram .platform-handle:hover {
+  color: #C4B5FD;
+  border-bottom-color: rgba(168, 85, 247, 0.7);
+}
+
+.ig-user-selector {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  padding: 20px;
+}
+
+.ig-user-selector.active {
+  display: flex;
+}
+
+.ig-user-selector-content {
+  background: #0d0e10;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 18px;
+  padding: 24px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+.ig-selector-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.ig-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.ig-selector-item {
+  padding: 12px 14px;
+  background: rgba(168, 85, 247, 0.08);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.ig-selector-item:hover {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #C4B5FD;
+}
+
+.ig-selector-item.active {
+  background: linear-gradient(135deg, #A855F7 0%, #6B21A8 100%);
+  border-color: #A855F7;
+  color: #FFF;
+}
+
 .platform-stats {
   display: grid;
   gap: 10px;
@@ -2331,20 +2419,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
           <div class="platform-stat"><span>Revenue</span><strong id="ytRevenue">—</strong></div>
         </div>
       </div>
-      <div class="platform-card">
+      <div class="platform-card platform-card--instagram" id="igCard">
         <div class="platform-header">
           <div class="platform-icon platform-icon--brand" aria-hidden="true">
             <span class="platform-mark">SL</span>
           </div>
           <div>
             <div class="platform-name">Instagram</div>
-            <div class="platform-handle">@yourhandle</div>
+            <div class="platform-handle" id="igHandleBtn">@yourhandle</div>
           </div>
         </div>
         <div class="platform-stats">
           <div class="platform-stat"><span>Followers</span><strong id="igFollowers">—</strong></div>
           <div class="platform-stat"><span>Views</span><strong id="igViews">—</strong></div>
           <div class="platform-stat"><span>Revenue</span><strong id="igRevenue">—</strong></div>
+        </div>
+      </div>
+      <div class="ig-user-selector" id="igUserSelector">
+        <div class="ig-user-selector-content">
+          <div class="ig-selector-title">Select Instagram Account</div>
+          <div class="ig-selector-list" id="igUserList"></div>
         </div>
       </div>
     </div>
@@ -2877,6 +2971,85 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   tabs.forEach(b => b.addEventListener('click', () => setActiveTab(b.dataset.tab)));
   const savedTab = storeGet(TAB_KEY);
   setActiveTab(savedTab && ['net','subs','incoming','wish','socials','nova'].includes(savedTab) ? savedTab : 'net');
+
+  // ============================================================
+  // INSTAGRAM USER SELECTOR
+  // ============================================================
+  const IG_USERS_KEY = 'ig_users';
+  const IG_CURRENT_KEY = 'ig_current_user';
+  const defaultIGUsers = [
+    { handle: '@yourhandle', followers: '12.5K', views: '245K', revenue: '—' },
+    { handle: '@travel_diaries', followers: '8.3K', views: '156K', revenue: '$240' },
+    { handle: '@lifestyle_mag', followers: '25K', views: '520K', revenue: '$1.2K' }
+  ];
+  
+  function initInstagramSelector() {
+    const igHandleBtn = document.getElementById('igHandleBtn');
+    const igUserSelector = document.getElementById('igUserSelector');
+    const igUserList = document.getElementById('igUserList');
+    const igFollowers = document.getElementById('igFollowers');
+    const igViews = document.getElementById('igViews');
+    const igRevenue = document.getElementById('igRevenue');
+    
+    if (!igHandleBtn || !igUserSelector) return;
+    
+    const users = storeGet(IG_USERS_KEY) || defaultIGUsers;
+    const currentIdx = Number(storeGet(IG_CURRENT_KEY)) || 0;
+    
+    // Render current user data
+    function renderIGCurrent() {
+      const user = users[currentIdx];
+      if (user) {
+        igHandleBtn.textContent = user.handle;
+        if (igFollowers) igFollowers.textContent = user.followers;
+        if (igViews) igViews.textContent = user.views;
+        if (igRevenue) igRevenue.textContent = user.revenue;
+      }
+    }
+    
+    // Render user list
+    function renderIGList() {
+      igUserList.innerHTML = users.map((u, i) => 
+        `<div class="ig-selector-item${i === currentIdx ? ' active' : ''}" data-idx="${i}">${u.handle}</div>`
+      ).join('');
+      
+      igUserList.querySelectorAll('.ig-selector-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const idx = Number(item.dataset.idx);
+          storeSet(IG_CURRENT_KEY, idx);
+          renderIGList();
+          renderIGCurrent();
+          setTimeout(() => igUserSelector.classList.remove('active'), 150);
+        });
+      });
+    }
+    
+    // Click handle to show selector
+    igHandleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      igUserSelector.classList.add('active');
+    });
+    
+    // Close selector on outside click
+    igUserSelector.addEventListener('click', (e) => {
+      if (e.target === igUserSelector) {
+        igUserSelector.classList.remove('active');
+      }
+    });
+    
+    // Close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && igUserSelector.classList.contains('active')) {
+        igUserSelector.classList.remove('active');
+      }
+    });
+    
+    renderIGCurrent();
+    renderIGList();
+  }
+  
+  // Initialize when socials section is visible
+  setTimeout(initInstagramSelector, 100);
 
   // ============================================================
   // NET WORTH (copied from the main dashboard, verbatim logic)
