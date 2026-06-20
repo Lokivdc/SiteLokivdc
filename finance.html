@@ -411,10 +411,11 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 }
 
 .platform-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(224, 118, 88, 0.18), rgba(22, 12, 11, 0.28));
+  border: 1px solid rgba(224, 118, 88, 0.28);
   border-radius: 18px;
   padding: 18px;
+  box-shadow: 0 20px 44px rgba(224, 118, 88, 0.12);
 }
 
 .platform-header {
@@ -425,14 +426,34 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 }
 
 .platform-icon {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.08);
+  background: rgba(224, 118, 88, 0.22);
+  color: #fff;
   font-size: 18px;
+  border: 1px solid rgba(224, 118, 88, 0.42);
+}
+
+.platform-icon.platform-icon--brand {
+  background: linear-gradient(135deg, #E07658 0%, #C85840 100%);
+}
+
+.platform-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: #FFF;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .platform-name {
@@ -2296,7 +2317,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div class="grid-2">
       <div class="platform-card">
         <div class="platform-header">
-          <div class="platform-icon">▶️</div>
+          <div class="platform-icon platform-icon--brand" aria-hidden="true">
+            <span class="platform-mark">SL</span>
+          </div>
           <div>
             <div class="platform-name">YouTube</div>
             <div class="platform-handle">@yourchannel</div>
@@ -2310,7 +2333,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       </div>
       <div class="platform-card">
         <div class="platform-header">
-          <div class="platform-icon">📸</div>
+          <div class="platform-icon platform-icon--brand" aria-hidden="true">
+            <span class="platform-mark">SL</span>
+          </div>
           <div>
             <div class="platform-name">Instagram</div>
             <div class="platform-handle">@yourhandle</div>
