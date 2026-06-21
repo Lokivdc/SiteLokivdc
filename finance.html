@@ -12,86 +12,6 @@
 <script src="sync.js" defer></script>
 <script src="topbar.js" defer></script>
 <style>
-/* Basis structuur voor de social grid en kaarten */
-.social-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
-}
-
-.social-card {
-  background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 20px 16px;
-  text-align: center;
-  text-decoration: none;
-  color: var(--text-primary);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.social-card:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-2px);
-}
-
-.social-icon-wrapper {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.social-svg {
-  width: 36px;
-  height: 36px;
-  transition: filter 0.2s ease;
-}
-
-/* Specifieke logo kleuren en hovers */
-
-/* YouTube: Rood logo */
-.card-youtube .social-svg {
-  fill: #FF0000;
-}
-.card-youtube:hover {
-  border-color: rgba(255, 0, 0, 0.3);
-  box-shadow: 0 4px 20px rgba(255, 0, 0, 0.15);
-}
-
-/* Instagram: Gradient logo */
-.card-instagram .social-svg {
-  fill: url(#instagram-gradient);
-}
-.card-instagram:hover {
-  border-color: rgba(214, 36, 159, 0.3);
-  box-shadow: 0 4px 20px rgba(214, 36, 159, 0.15);
-}
-
-/* TikTok: Wit logo met de iconische tweekleurige glitch-gloed op hover */
-.card-tiktok .social-svg {
-  fill: #FFFFFF;
-}
-.card-tiktok:hover {
-  border-color: rgba(37, 244, 238, 0.4);
-  /* De bekende TikTok RGB-glitch schaduw */
-  filter: drop-shadow(2px 2px 0px #fe2c55) drop-shadow(-2px -2px 0px #25f4ee);
-  box-shadow: 0 4px 20px rgba(37, 244, 238, 0.1), 0 4px 20px rgba(254, 44, 85, 0.1);
-}
-
-.social-name {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-primary);
-  letter-spacing: 0.3px;
-}
 :root {
   --bg: #0A0A0B;
   --bg-deep: #050506;
@@ -2609,43 +2529,65 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 </nav>
 
 <!-- ===== SOCIALS ===== -->
-<div class="social-grid">
-  <a href="YOUR_YOUTUBE_LINK_HERE" class="social-card card-youtube" target="_blank">
-    <div class="social-icon-wrapper">
-      <svg viewBox="0 0 24 24" class="social-svg">
-        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-      </svg>
+<div class="section" data-section="socials" hidden>
+  <div class="section-title">
+    <span class="section-title-text">SOCIALS · COMMUNITY</span>
+  </div>
+  <div class="card">
+    <h2 class="card-title">Socials Hub</h2>
+    <p class="card-copy">Track your online communities, creator support, audience subscriptions, and the socials costs that matter to your personal finance goals.</p>
+  </div>
+  <div class="card socials-grid">
+    <div class="grid-2">
+      <div class="platform-card platform-card--youtube" id="ytCard">
+        <div class="platform-header">
+          <div class="platform-icon platform-icon--brand" aria-hidden="true">
+            <span class="platform-mark">SL</span>
+          </div>
+          <div>
+            <div class="platform-name">YouTube</div>
+            <div class="platform-handle" id="ytHandleBtn">@yourchannel</div>
+          </div>
+        </div>
+        <div class="platform-stats">
+          <div class="platform-stat"><span>Followers</span><strong id="ytFollowers">—</strong></div>
+          <div class="platform-stat"><span>Views</span><strong id="ytViews">—</strong></div>
+          <div class="platform-stat"><span>Revenue</span><strong id="ytRevenue">—</strong></div>
+        </div>
+      </div>
+      <div class="yt-user-selector" id="ytUserSelector">
+        <div class="yt-user-selector-content">
+          <div class="yt-selector-title">Select YouTube Channel</div>
+          <div class="yt-selector-list" id="ytUserList"></div>
+        </div>
+      </div>
+      <div class="platform-card platform-card--instagram" id="igCard">
+        <div class="platform-header">
+          <div class="platform-icon platform-icon--brand" aria-hidden="true">
+            <span class="platform-mark">SL</span>
+          </div>
+          <div>
+            <div class="platform-name">Instagram</div>
+            <div class="platform-handle" id="igHandleBtn">@yourhandle</div>
+          </div>
+        </div>
+        <div class="platform-stats">
+          <div class="platform-stat"><span>Followers</span><strong id="igFollowers">—</strong></div>
+          <div class="platform-stat"><span>Views</span><strong id="igViews">—</strong></div>
+          <div class="platform-stat"><span>Revenue</span><strong id="igRevenue">—</strong></div>
+        </div>
+      </div>
+      <div class="ig-user-selector" id="igUserSelector">
+        <div class="ig-user-selector-content">
+          <div class="ig-selector-title">Select Instagram Account</div>
+          <div class="ig-selector-list" id="igUserList"></div>
+        </div>
+      </div>
     </div>
-    <span class="social-name">YouTube</span>
-  </a>
-
-  <a href="YOUR_INSTAGRAM_LINK_HERE" class="social-card card-instagram" target="_blank">
-    <div class="social-icon-wrapper">
-      <svg viewBox="0 0 24 24" class="social-svg">
-        <defs>
-          <linearGradient id="instagram-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#fdf497" />
-            <stop offset="5%" stop-color="#fdf497" />
-            <stop offset="45%" stop-color="#fd5949" />
-            <stop offset="60%" stop-color="#d6249f" />
-            <stop offset="100%" stop-color="#285AEB" />
-          </linearGradient>
-        </defs>
-        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
-      </svg>
-    </div>
-    <span class="social-name">Instagram</span>
-  </a>
-
-  <a href="YOUR_TIKTOK_LINK_HERE" class="social-card card-tiktok" target="_blank">
-    <div class="social-icon-wrapper">
-      <svg viewBox="0 0 24 24" class="social-svg">
-        <path d="M12.525.02c1.31-.032 2.612-.012 3.914-.012.317 1.86 1.233 3.51 2.7 4.615.833.623 1.793 1.074 2.82 1.303v4.062a11.23 11.23 0 0 1-5.115-1.258c-.015 3.32-.005 6.64-.025 9.96-.15 2.618-1.574 5.056-4.045 6.002-2.68 1.01-5.88.423-7.925-1.556-2.22-2.127-2.652-5.717-1.026-8.328 1.5-2.454 4.457-3.687 7.213-3.037v4.195c-1.503-.435-3.18-.046-4.27 1.056-1.127 1.107-1.42 2.95-.694 4.35.71 1.413 2.376 2.227 3.946 1.99 1.522-.19 2.78-1.424 2.964-2.943.048-2.612.02-5.226.03-7.838V0h1.338z"/>
-      </svg>
-    </div>
-    <span class="social-name">TikTok</span>
-  </a>
+    <p class="section-note">Use the fields above to record social channel followers, views, and revenue for creator finance tracking.</p>
+  </div>
 </div>
+
 <!-- ===== BUSINESSES ===== -->
 <div class="section" data-section="businesses" hidden>
   <div class="section-title">
