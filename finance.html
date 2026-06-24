@@ -514,26 +514,26 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 }
 
 .platform-card.platform-card--tiktok {
-  background: linear-gradient(180deg, rgba(37, 244, 238, 0.14), rgba(254, 44, 85, 0.18));
-  border: 1px solid rgba(254, 44, 85, 0.3);
-  box-shadow: 0 20px 44px rgba(254, 44, 85, 0.14);
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.18), rgba(20, 8, 40, 0.32));
+  border: 1px solid rgba(139, 92, 246, 0.38);
+  box-shadow: 0 20px 44px rgba(59, 130, 246, 0.18);
 }
 
 .platform-card.platform-card--tiktok .platform-icon.platform-icon--brand {
-  background: linear-gradient(135deg, #25F4EE 0%, #FE2C55 50%, #000000 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #6B21A8 60%, #0B0218 100%);
 }
 
 .platform-card.platform-card--tiktok .platform-handle {
   cursor: pointer;
-  color: #25F4EE;
+  color: #A78BFA;
   font-weight: 600;
-  border-bottom: 1px solid rgba(37, 244, 238, 0.4);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.45);
   transition: all 0.15s ease;
 }
 
 .platform-card.platform-card--tiktok .platform-handle:hover {
-  color: #7DF9F5;
-  border-bottom-color: rgba(37, 244, 238, 0.7);
+  color: #C4B5FD;
+  border-bottom-color: rgba(139, 92, 246, 0.8);
 }
 
 .yt-user-selector {
@@ -663,6 +663,71 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 .ig-selector-item.active {
   background: linear-gradient(135deg, #A855F7 0%, #6B21A8 100%);
   border-color: #A855F7;
+  color: #FFF;
+}
+
+.tt-user-selector {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  padding: 20px;
+}
+
+.tt-user-selector.active {
+  display: flex;
+}
+
+.tt-user-selector-content {
+  background: #0d0e10;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 18px;
+  padding: 24px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: 0 30px 80px rgba(59, 130, 246, 0.35);
+}
+
+.tt-selector-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.tt-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.tt-selector-item {
+  padding: 12px 14px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.tt-selector-item:hover {
+  background: rgba(139, 92, 246, 0.18);
+  border-color: rgba(139, 92, 246, 0.5);
+  color: #C4B5FD;
+}
+
+.tt-selector-item.active {
+  background: linear-gradient(135deg, #3B82F6 0%, #6B21A8 100%);
+  border-color: #8B5CF6;
   color: #FFF;
 }
 
@@ -3284,6 +3349,81 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   
   // Initialize when socials section is visible
   setTimeout(initInstagramSelector, 100);
+
+  // ============================================================
+  // TIKTOK USER SELECTOR
+  // ============================================================
+  const TT_USERS_KEY = 'tt_users';
+  const TT_CURRENT_KEY = 'tt_current_user';
+  const defaultTTUsers = [
+    { handle: '@dance.flo',    followers: '4.7K',  views: '128K',  revenue: 85  },
+    { handle: '@fitness_kai',  followers: '12.1K', views: '412K',  revenue: 540 },
+    { handle: '@chef.lou',     followers: '23.6K', views: '1.1M',  revenue: 1480 },
+    { handle: '@tech.tips',    followers: '8.4K',  views: '276K',  revenue: 210 },
+    { handle: '@travel.pulse', followers: '31.2K', views: '890K',  revenue: 920 }
+  ];
+
+  function initTikTokSelector() {
+    const ttHandleBtn = document.getElementById('ttHandleBtn');
+    const ttUserSelector = document.getElementById('ttUserSelector');
+    const ttUserList = document.getElementById('ttUserList');
+    const ttFollowers = document.getElementById('ttFollowers');
+    const ttViews = document.getElementById('ttViews');
+    const ttRevenue = document.getElementById('ttRevenue');
+
+    if (!ttHandleBtn || !ttUserSelector) return;
+
+    const users = storeGet(TT_USERS_KEY) || defaultTTUsers;
+    const currentIdx = Number(storeGet(TT_CURRENT_KEY)) || 0;
+
+    function renderTTCurrent() {
+      const user = users[currentIdx] || users[0];
+      if (!user) return;
+      if (ttHandleBtn) ttHandleBtn.textContent = user.handle;
+      if (ttFollowers) ttFollowers.textContent = user.followers;
+      if (ttViews) ttViews.textContent = user.views;
+      if (ttRevenue) ttRevenue.textContent = (user.revenue == null) ? '—' : fmtMoney(user.revenue, 'EUR');
+    }
+
+    function renderTTList() {
+      ttUserList.innerHTML = users.map((u, i) =>
+        `<div class="tt-selector-item${i === currentIdx ? ' active' : ''}" data-idx="${i}">${u.handle}</div>`
+      ).join('');
+
+      ttUserList.querySelectorAll('.tt-selector-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const idx = Number(item.dataset.idx);
+          storeSet(TT_CURRENT_KEY, idx);
+          renderTTList();
+          renderTTCurrent();
+          setTimeout(() => ttUserSelector.classList.remove('active'), 150);
+        });
+      });
+    }
+
+    ttHandleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      ttUserSelector.classList.add('active');
+    });
+
+    ttUserSelector.addEventListener('click', (e) => {
+      if (e.target === ttUserSelector) {
+        ttUserSelector.classList.remove('active');
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && ttUserSelector.classList.contains('active')) {
+        ttUserSelector.classList.remove('active');
+      }
+    });
+
+    renderTTCurrent();
+    renderTTList();
+  }
+
+  // Initialize when socials section is visible
+  setTimeout(initTikTokSelector, 100);
 
   // ============================================================
   // YOUTUBE USER SELECTOR
