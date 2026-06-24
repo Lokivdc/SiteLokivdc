@@ -3293,11 +3293,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     if (!igHandleBtn || !igUserSelector) return;
     
     const users = storeGet(IG_USERS_KEY) || defaultIGUsers;
-    const currentIdx = Number(storeGet(IG_CURRENT_KEY)) || 0;
-    
+
     // Render current user data (revenue forced to EUR)
     function renderIGCurrent() {
-      const user = users[currentIdx];
+      const idx = Number(storeGet(IG_CURRENT_KEY)) || 0;
+      const user = users[idx] || users[0];
       if (user) {
         igHandleBtn.textContent = user.handle;
         if (igFollowers) igFollowers.textContent = user.followers;
@@ -3305,13 +3305,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         if (igRevenue) igRevenue.textContent = (user.revenue == null) ? '—' : fmtMoney(user.revenue, 'EUR');
       }
     }
-    
+
     // Render user list
     function renderIGList() {
-      igUserList.innerHTML = users.map((u, i) => 
-        `<div class="ig-selector-item${i === currentIdx ? ' active' : ''}" data-idx="${i}">${u.handle}</div>`
+      const activeIdx = Number(storeGet(IG_CURRENT_KEY)) || 0;
+      const list = storeGet(IG_USERS_KEY) || defaultIGUsers;
+      igUserList.innerHTML = list.map((u, i) =>
+        `<div class="ig-selector-item${i === activeIdx ? ' active' : ''}" data-idx="${i}">${u.handle}</div>`
       ).join('');
-      
+
       igUserList.querySelectorAll('.ig-selector-item').forEach(item => {
         item.addEventListener('click', () => {
           const idx = Number(item.dataset.idx);
@@ -3374,10 +3376,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     if (!ttHandleBtn || !ttUserSelector) return;
 
     const users = storeGet(TT_USERS_KEY) || defaultTTUsers;
-    const currentIdx = Number(storeGet(TT_CURRENT_KEY)) || 0;
 
     function renderTTCurrent() {
-      const user = users[currentIdx] || users[0];
+      const idx = Number(storeGet(TT_CURRENT_KEY)) || 0;
+      const user = users[idx] || users[0];
       if (!user) return;
       if (ttHandleBtn) ttHandleBtn.textContent = user.handle;
       if (ttFollowers) ttFollowers.textContent = user.followers;
@@ -3386,8 +3388,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     }
 
     function renderTTList() {
-      ttUserList.innerHTML = users.map((u, i) =>
-        `<div class="tt-selector-item${i === currentIdx ? ' active' : ''}" data-idx="${i}">${u.handle}</div>`
+      const activeIdx = Number(storeGet(TT_CURRENT_KEY)) || 0;
+      const list = storeGet(TT_USERS_KEY) || defaultTTUsers;
+      ttUserList.innerHTML = list.map((u, i) =>
+        `<div class="tt-selector-item${i === activeIdx ? ' active' : ''}" data-idx="${i}">${u.handle}</div>`
       ).join('');
 
       ttUserList.querySelectorAll('.tt-selector-item').forEach(item => {
@@ -3447,11 +3451,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     if (!ytHandleBtn || !ytUserSelector) return;
     
     const users = storeGet(YT_USERS_KEY) || defaultYTUsers;
-    const currentIdx = Number(storeGet(YT_CURRENT_KEY)) || 0;
-    
+
     // Render current user data (revenue forced to EUR)
     function renderYTCurrent() {
-      const user = users[currentIdx];
+      const idx = Number(storeGet(YT_CURRENT_KEY)) || 0;
+      const user = users[idx] || users[0];
       if (user) {
         ytHandleBtn.textContent = user.handle;
         if (ytFollowers) ytFollowers.textContent = user.followers;
@@ -3459,13 +3463,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         if (ytRevenue) ytRevenue.textContent = (user.revenue == null) ? '—' : fmtMoney(user.revenue, 'EUR');
       }
     }
-    
+
     // Render user list
     function renderYTList() {
-      ytUserList.innerHTML = users.map((u, i) => 
-        `<div class="yt-selector-item${i === currentIdx ? ' active' : ''}" data-idx="${i}">${u.handle}</div>`
+      const activeIdx = Number(storeGet(YT_CURRENT_KEY)) || 0;
+      const list = storeGet(YT_USERS_KEY) || defaultYTUsers;
+      ytUserList.innerHTML = list.map((u, i) =>
+        `<div class="yt-selector-item${i === activeIdx ? ' active' : ''}" data-idx="${i}">${u.handle}</div>`
       ).join('');
-      
+
       ytUserList.querySelectorAll('.yt-selector-item').forEach(item => {
         item.addEventListener('click', () => {
           const idx = Number(item.dataset.idx);
