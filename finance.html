@@ -513,6 +513,29 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
   border-bottom-color: rgba(255,77,79,0.7);
 }
 
+.platform-card.platform-card--tiktok {
+  background: linear-gradient(180deg, rgba(37, 244, 238, 0.14), rgba(254, 44, 85, 0.18));
+  border: 1px solid rgba(254, 44, 85, 0.3);
+  box-shadow: 0 20px 44px rgba(254, 44, 85, 0.14);
+}
+
+.platform-card.platform-card--tiktok .platform-icon.platform-icon--brand {
+  background: linear-gradient(135deg, #25F4EE 0%, #FE2C55 50%, #000000 100%);
+}
+
+.platform-card.platform-card--tiktok .platform-handle {
+  cursor: pointer;
+  color: #25F4EE;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(37, 244, 238, 0.4);
+  transition: all 0.15s ease;
+}
+
+.platform-card.platform-card--tiktok .platform-handle:hover {
+  color: #7DF9F5;
+  border-bottom-color: rgba(37, 244, 238, 0.7);
+}
+
 .yt-user-selector {
   position: fixed;
   inset: 0;
@@ -2581,6 +2604,28 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div class="ig-user-selector-content">
           <div class="ig-selector-title">Select Instagram Account</div>
           <div class="ig-selector-list" id="igUserList"></div>
+        </div>
+      </div>
+      <div class="platform-card platform-card--tiktok" id="ttCard">
+        <div class="platform-header">
+          <div class="platform-icon platform-icon--brand" aria-hidden="true">
+            <span class="platform-mark">SL</span>
+          </div>
+          <div>
+            <div class="platform-name">TikTok</div>
+            <div class="platform-handle" id="ttHandleBtn">@yourhandle</div>
+          </div>
+        </div>
+        <div class="platform-stats">
+          <div class="platform-stat"><span>Followers</span><strong id="ttFollowers">—</strong></div>
+          <div class="platform-stat"><span>Views</span><strong id="ttViews">—</strong></div>
+          <div class="platform-stat"><span>Revenue</span><strong id="ttRevenue">—</strong></div>
+        </div>
+      </div>
+      <div class="tt-user-selector" id="ttUserSelector">
+        <div class="tt-user-selector-content">
+          <div class="tt-selector-title">Select TikTok Account</div>
+          <div class="tt-selector-list" id="ttUserList"></div>
         </div>
       </div>
     </div>
