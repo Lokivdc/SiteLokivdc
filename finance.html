@@ -3962,17 +3962,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       const a1 = angle + pad;
       const a2 = angle + sliceAngle - pad;
       if (a2 > a1) {
+        const midAngle = (a1 + a2) / 2;
+        const isHover = s.key === hoverKey;
+        const offset = isHover ? 7 : 0;
+        const dx = Math.cos(midAngle) * offset;
+        const dy = Math.sin(midAngle) * offset;
         pathParts.push({
           key: s.key,
-          html: '<path d="' + donutArcPath(70, 70, 60, 44, a1, a2) + '" fill="' + s.color + '" data-slice-key="' + escapeHtml(s.key) + '"></path>'
+          html: '<path d="' + donutArcPath(70, 70, 60, 44, a1, a2) + '" fill="' + s.color + '" data-slice-key="' + escapeHtml(s.key) + '" transform="translate(' + dx.toFixed(2) + ' ' + dy.toFixed(2) + ')" style="transform-box: fill-box; transform-origin: center; transition: transform 0.12s ease, filter 0.12s ease; filter: ' + (isHover ? 'drop-shadow(0 0 8px rgba(255,255,255,0.25))' : 'none') + '"></path>'
         });
       }
       angle += sliceAngle;
     });
-    if (hoverKey) {
-      const hoverIndex = pathParts.findIndex(part => part.key === hoverKey);
-      if (hoverIndex >= 0) pathParts.push(pathParts.splice(hoverIndex, 1)[0]);
-    }
     svg.innerHTML = pathParts.map(part => part.html).join('');
 
     legend.innerHTML = slices.map(s => {
