@@ -2753,21 +2753,31 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       legend.innerHTML = '';
       count.textContent = '—';
       return;
-    }
-    empty.classList.add('hidden');
+      const hoverKey = window.__nwDonutHoverKey || '';
+
+      // Sort largest first for geometry, then draw the hovered slice last so
+      // it appears above the other segments without changing its position.
+      slices.sort((a, b) => b.value - a.value);
     total.textContent = fmtMoney(grand).split(' ')[1] || fmtMoney(grand);
-    count.textContent = slices.length + ' slice' + (slices.length === 1 ? '' : 's');
+      const pathParts = [];
 
     // Sort largest first for geometry.
     slices.sort((a, b) => b.value - a.value);
     let angle = -Math.PI / 2;
     let html = '';
     slices.forEach(s => {
-      const sliceAngle = (s.value / sliceTotal) * Math.PI * 2;
+          pathParts.push({
+            key: s.key,
+            html: '<path d="' + donutArcPath(70, 70, 60, 44, a1, a2) + '" fill="' + s.color + '" data-slice-key="' + escapeHtml(s.key) + '"></path>'
+          });
       const pad = slices.length > 1 ? 0.015 : 0;
       const a1 = angle + pad;
       const a2 = angle + sliceAngle - pad;
-      if (a2 > a1) {
+      if (hoverKey) {
+        const hoverIndex = pathParts.findIndex(part => part.key === hoverKey);
+        if (hoverIndex >= 0) pathParts.push(pathParts.splice(hoverIndex, 1)[0]);
+      }
+      svg.innerHTML = pathParts.map(part => part.html).join('');
         html += '<path d="' + donutArcPath(70, 70, 60, 44, a1, a2) + '" fill="' + s.color + '"></path>';
       }
       angle += sliceAngle;
@@ -2782,6 +2792,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         + '<span class="nw-leg-pct">' + pct + '%</span>'
         + '</div>';
     }).join('');
+
+    if (!svg.__nwDonutHoverWired) {
+      svg.__nwDonutHoverWired = true;
+      svg.addEventListener('pointermove', (e) => {
+        const path = e.target.closest('path[data-slice-key]');
+        const key = path ? path.dataset.sliceKey || '' : '';
+        if (window.__nwDonutHoverKey === key) return;
+        window.__nwDonutHoverKey = key;
+        renderAllocationDonut(catTotals, grand);
+      });
+      svg.addEventListener('pointerleave', () => {
+        if (!window.__nwDonutHoverKey) return;
+        window.__nwDonutHoverKey = '';
+        renderAllocationDonut(catTotals, grand);
+      });
+    }
   }
 
   // Net-worth history chart
