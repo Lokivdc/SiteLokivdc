@@ -2758,7 +2758,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     total.textContent = fmtMoney(grand).split(' ')[1] || fmtMoney(grand);
     count.textContent = slices.length + ' slice' + (slices.length === 1 ? '' : 's');
 
-    // Sort largest first
+    // Sort largest first for geometry.
     slices.sort((a, b) => b.value - a.value);
     let angle = -Math.PI / 2;
     let html = '';

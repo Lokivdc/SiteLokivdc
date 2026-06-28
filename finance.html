@@ -3934,15 +3934,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       slices.push({ key: 'subs', name: meta.name, color: meta.color, value: annualSubsCHF });
     }
 
-    const promotedKey = window.__nwDonutPromotedKey || window.__nwLegendPromotedKey || '';
-    const legendSlices = promotedKey
-      ? slices.slice().sort((a, b) => {
-          if (a.key === promotedKey) return -1;
-          if (b.key === promotedKey) return 1;
-          return b.value - a.value;
-        })
-      : slices.slice();
-
     const sliceTotal = slices.reduce((s, x) => s + x.value, 0);
 
     if (!slices.length || sliceTotal <= 0) {
@@ -3958,81 +3949,30 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     total.textContent = fmtMoney(grand).split(' ')[1] || fmtMoney(grand);
     count.textContent = slices.length + ' slice' + (slices.length === 1 ? '' : 's');
 
-    // Sort largest first for geometry, then draw the hovered slice last so
-    // it appears above the other segments without changing its position.
+    // Sort largest first for geometry.
     const sortedSlices = slices.slice().sort((a, b) => b.value - a.value);
     let angle = -Math.PI / 2;
-    const pathParts = [];
+    let html = '';
     sortedSlices.forEach(s => {
       const sliceAngle = (s.value / sliceTotal) * Math.PI * 2;
       const pad = sortedSlices.length > 1 ? 0.015 : 0;
       const a1 = angle + pad;
       const a2 = angle + sliceAngle - pad;
       if (a2 > a1) {
-        const active = s.key === promotedKey ? ' data-promoted="1"' : '';
-        pathParts.push({
-          key: s.key,
-          html: '<path d="' + donutArcPath(70, 70, 60, 44, a1, a2) + '" fill="' + s.color + '" data-slice-key="' + escapeHtml(s.key) + '"' + active + '></path>'
-        });
+        html += '<path d="' + donutArcPath(70, 70, 60, 44, a1, a2) + '" fill="' + s.color + '"></path>';
       }
       angle += sliceAngle;
     });
-    if (promotedKey) {
-      const promotedIndex = pathParts.findIndex(part => part.key === promotedKey);
-      if (promotedIndex >= 0) {
-        pathParts.push(pathParts.splice(promotedIndex, 1)[0]);
-      }
-    }
-    svg.innerHTML = pathParts.map(part => part.html).join('');
+    svg.innerHTML = html;
 
-    legend.innerHTML = legendSlices.map(s => {
+    legend.innerHTML = slices.map(s => {
       const pct = ((s.value / sliceTotal) * 100).toFixed(1);
-      const promoted = s.key === promotedKey ? ' is-promoted' : '';
-      return '<div class="nw-leg' + promoted + '" data-slice-key="' + escapeHtml(s.key) + '" style="color:' + s.color + '">'
+      return '<div class="nw-leg" style="color:' + s.color + '">'
         + '<span class="nw-leg-dot" style="background:' + s.color + '"></span>'
         + '<span class="nw-leg-name">' + escapeHtml(s.name) + '</span>'
         + '<span class="nw-leg-pct">' + pct + '%</span>'
         + '</div>';
     }).join('');
-
-    if (!legend.__nwLegendWired) {
-      legend.__nwLegendWired = true;
-      legend.addEventListener('pointerover', (e) => {
-        const item = e.target.closest('.nw-leg');
-        if (!item || !legend.contains(item)) return;
-        const key = item.dataset.sliceKey || '';
-        if (window.__nwLegendPromotedKey === key) return;
-        window.__nwLegendPromotedKey = key;
-        const state = window.__nwLegendRenderState || { catTotals: catTotals, grand: grand };
-        renderAllocationDonut(state.catTotals, state.grand);
-        requestAnimationFrame(() => { legend.scrollTop = 0; });
-      });
-      legend.addEventListener('pointerleave', () => {
-        if (!window.__nwLegendPromotedKey) return;
-        window.__nwLegendPromotedKey = '';
-        const state = window.__nwLegendRenderState || { catTotals: catTotals, grand: grand };
-        renderAllocationDonut(state.catTotals, state.grand);
-      });
-    }
-
-    if (!svg.__nwDonutWired) {
-      svg.__nwDonutWired = true;
-      svg.addEventListener('pointerover', (e) => {
-        const path = e.target.closest('path[data-slice-key]');
-        if (!path || !svg.contains(path)) return;
-        const key = path.dataset.sliceKey || '';
-        if (window.__nwDonutPromotedKey === key) return;
-        window.__nwDonutPromotedKey = key;
-        const state = window.__nwLegendRenderState || { catTotals: catTotals, grand: grand };
-        renderAllocationDonut(state.catTotals, state.grand);
-      });
-      svg.addEventListener('pointerleave', () => {
-        if (!window.__nwDonutPromotedKey) return;
-        window.__nwDonutPromotedKey = '';
-        const state = window.__nwLegendRenderState || { catTotals: catTotals, grand: grand };
-        renderAllocationDonut(state.catTotals, state.grand);
-      });
-    }
   }
 
   // Net-worth history chart
