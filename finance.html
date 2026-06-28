@@ -2242,6 +2242,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       </div>
       <div style="display:flex;align-items:center;gap:6px">
         <span style="font-size:11px;color:var(--text-tertiary)">EUR</span>
+        <select id="netWorthCurrency" style="background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;font-family:inherit;cursor:pointer">
+          <option value="EUR" selected>EUR</option>
+          <option value="CHF">CHF</option>
+          <option value="USD">USD</option>
+          <option value="GBP">GBP</option>
+        </select>
       </div>
     </div>
 
@@ -3564,6 +3570,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // ============================================================
   // NET WORTH (copied from the main dashboard, verbatim logic)
   // ============================================================
+  const CURRENCY_KEY = 'nw_currency';
   const DISPLAY_CURRENCY = 'EUR';
   const NW_CATS = [
     { key: 'bank',   listId: 'bankList',   totalId: 'bankTotal',   nameId: 'bankName',   amtId: 'bankAmount',   addId: 'bankAddBtn' },
@@ -3571,6 +3578,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     { key: 'crypto', listId: 'cryptoList', totalId: 'cryptoTotal', nameId: 'cryptoName', amtId: 'cryptoAmount', addId: 'cryptoAddBtn' },
     { key: 'other',  listId: 'otherList',  totalId: 'otherTotal',  nameId: 'otherName',  amtId: 'otherAmount',  addId: 'otherAddBtn' }
   ];
+  const currencyEl = document.getElementById('netWorthCurrency');
   const netWorthTotal = document.getElementById('netWorthTotal');
   const netWorthBreakdown = document.getElementById('netWorthBreakdown');
 
@@ -3596,7 +3604,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   function fmtMoney(amountCHF) {
     // optional overrideSymbol: if provided, format in that currency instead
     const overrideSymbol = (arguments.length > 1) ? arguments[1] : null;
-    const symbol = overrideSymbol || DISPLAY_CURRENCY;
+    const symbol = overrideSymbol || (currencyEl ? currencyEl.value : DISPLAY_CURRENCY);
     const rate = exchangeRates[symbol] || 1;
     const num = (Number(amountCHF) || 0) * rate;
     return num.toLocaleString('en-US', { minimumFractionDigits: num % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 }) + ' ' + symbol;
@@ -3638,7 +3646,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
   function beginNwAmountEdit(amtEl, items, idx, catKey) {
     if (amtEl.querySelector('input')) return;
-    const symbol = DISPLAY_CURRENCY;
+    const symbol = currencyEl ? currencyEl.value : DISPLAY_CURRENCY;
     const rate = exchangeRates[symbol] || 1;
     const curCHF = Number(items[idx].amount) || 0;
     const curDisplay = curCHF * rate;
@@ -4017,8 +4025,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       const n = nameInput.value.trim();
       const a = parseFloat(amtInput.value);
       if (!n || isNaN(a)) return;
-      // Interpret the input in EUR, then convert to CHF for storage.
-      const symbol = DISPLAY_CURRENCY;
+      // Interpret the input in the currently selected display currency,
+      // then convert to CHF for storage.
+      const symbol = currencyEl ? currencyEl.value : DISPLAY_CURRENCY;
       const rate = exchangeRates[symbol] || 1;
       const amountCHF = a / rate;
       const items = storeGet('nw:' + cat.key) || [];
@@ -4032,6 +4041,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doAdd(); });
     amtInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doAdd(); });
   });
+
+  if (currencyEl) {
+    const savedCur = storeGet(CURRENCY_KEY);
+    if (savedCur) currencyEl.value = savedCur;
+    else currencyEl.value = DISPLAY_CURRENCY;
+    currencyEl.addEventListener('change', () => {
+      storeSet(CURRENCY_KEY, currencyEl.value);
+      renderAllNetWorth();
+      renderSubs();
+    });
+  }
 
   renderAllNetWorth();
 
@@ -4999,7 +5019,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof initCloudSync !== 'function') return;
   initCloudSync({
     appKey: 'finance',
-    syncedKeys: ['subs', 'wishlist', 'incoming_orders', 'nw:activity', 'nw:history'],
+    syncedKeys: ['subs', 'wishlist', 'incoming_orders', 'nw_currency', 'nw:activity', 'nw:history'],
     syncedPrefixes: ['nw:'],
     onApplied: function () {
       window.dispatchEvent(new Event('storage'));
