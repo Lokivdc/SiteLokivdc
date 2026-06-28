@@ -1211,7 +1211,19 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
 .nw-donut-legend {
   margin-top: 8px;
   display: flex; flex-direction: column; gap: 4px;
+  max-height: 156px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.18) transparent;
 }
+.nw-donut-legend::-webkit-scrollbar { width: 6px; }
+.nw-donut-legend::-webkit-scrollbar-track { background: transparent; }
+.nw-donut-legend::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+  border-radius: 999px;
+}
+.nw-donut-legend::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.28); }
 .nw-leg {
   display: grid; grid-template-columns: 8px 1fr auto;
   gap: 8px; align-items: center;
@@ -1219,6 +1231,10 @@ html, body { scrollbar-width: none; -ms-overflow-style: none; }
   padding: 4px 6px;
   border-radius: 6px;
   font-variant-numeric: tabular-nums;
+  cursor: default;
+}
+.nw-leg.is-promoted {
+  background: rgba(255,255,255,0.05);
 }
 .nw-leg-dot {
   width: 8px; height: 8px; border-radius: 50%;
@@ -3873,6 +3889,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const legend = document.getElementById('nwDonutLegend');
     const count  = document.getElementById('nwDonutCount');
     if (!svg || !total || !legend) return;
+    window.__nwLegendRenderState = { catTotals: catTotals, grand: grand };
 
     // Build one slice per individual NW account, colored by parent category.
     // So "star one" (bank) and "Revolute" (bank) become two blue slices,
@@ -3913,6 +3930,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       slices.push({ key: 'subs', name: meta.name, color: meta.color, value: annualSubsCHF });
     }
 
+    const legendPromotedKey = window.__nwLegendPromotedKey || '';
+    const legendSlices = legendPromotedKey
+      ? slices.slice().sort((a, b) => {
+          if (a.key === legendPromotedKey) return -1;
+          if (b.key === legendPromotedKey) return 1;
+          return b.value - a.value;
+        })
+      : slices.slice();
+
     const sliceTotal = slices.reduce((s, x) => s + x.value, 0);
 
     if (!slices.length || sliceTotal <= 0) {
@@ -3944,14 +3970,35 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     });
     svg.innerHTML = html;
 
-    legend.innerHTML = slices.map(s => {
+    legend.innerHTML = legendSlices.map(s => {
       const pct = ((s.value / sliceTotal) * 100).toFixed(1);
-      return '<div class="nw-leg" style="color:' + s.color + '">'
+      const promoted = s.key === legendPromotedKey ? ' is-promoted' : '';
+      return '<div class="nw-leg' + promoted + '" data-slice-key="' + escapeHtml(s.key) + '" style="color:' + s.color + '">'
         + '<span class="nw-leg-dot" style="background:' + s.color + '"></span>'
         + '<span class="nw-leg-name">' + escapeHtml(s.name) + '</span>'
         + '<span class="nw-leg-pct">' + pct + '%</span>'
         + '</div>';
     }).join('');
+
+    if (!legend.__nwLegendWired) {
+      legend.__nwLegendWired = true;
+      legend.addEventListener('pointerover', (e) => {
+        const item = e.target.closest('.nw-leg');
+        if (!item || !legend.contains(item)) return;
+        const key = item.dataset.sliceKey || '';
+        if (window.__nwLegendPromotedKey === key) return;
+        window.__nwLegendPromotedKey = key;
+        const state = window.__nwLegendRenderState || { catTotals: catTotals, grand: grand };
+        renderAllocationDonut(state.catTotals, state.grand);
+        requestAnimationFrame(() => { legend.scrollTop = 0; });
+      });
+      legend.addEventListener('pointerleave', () => {
+        if (!window.__nwLegendPromotedKey) return;
+        window.__nwLegendPromotedKey = '';
+        const state = window.__nwLegendRenderState || { catTotals: catTotals, grand: grand };
+        renderAllocationDonut(state.catTotals, state.grand);
+      });
+    }
   }
 
   // Net-worth history chart
