@@ -3321,6 +3321,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         if (igViews) igViews.textContent = user.views;
         if (igRevenue) igRevenue.textContent = (user.revenue == null) ? '—' : fmtMoney(user.revenue, 'EUR');
       }
+      if (typeof renderAllNetWorth === 'function') renderAllNetWorth();
     }
 
     // Render user list
@@ -3402,6 +3403,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       if (ttFollowers) ttFollowers.textContent = user.followers;
       if (ttViews) ttViews.textContent = user.views;
       if (ttRevenue) ttRevenue.textContent = (user.revenue == null) ? '—' : fmtMoney(user.revenue, 'EUR');
+      if (typeof renderAllNetWorth === 'function') renderAllNetWorth();
     }
 
     function renderTTList() {
@@ -3479,6 +3481,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         if (ytViews) ytViews.textContent = user.views;
         if (ytRevenue) ytRevenue.textContent = (user.revenue == null) ? '—' : fmtMoney(user.revenue, 'EUR');
       }
+      if (typeof renderAllNetWorth === 'function') renderAllNetWorth();
     }
 
     // Render user list
@@ -3563,9 +3566,46 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         renderDropship();
       });
     }
+    if (typeof renderAllNetWorth === 'function') renderAllNetWorth();
   }
   
   setTimeout(renderDropship, 100);
+
+  const REVENUE_PALETTE = ['#60A5FA', '#34D399', '#F59E0B', '#F472B6', '#A78BFA', '#22D3EE', '#F87171', '#84CC16', '#FB923C', '#C084FC', '#38BDF8'];
+  function getRevenueAccounts() {
+    const sources = [
+      { label: 'YouTube', storageKey: YT_USERS_KEY, defaults: defaultYTUsers },
+      { label: 'Instagram', storageKey: IG_USERS_KEY, defaults: defaultIGUsers },
+      { label: 'TikTok', storageKey: TT_USERS_KEY, defaults: defaultTTUsers }
+    ];
+    const out = [];
+    let colorIndex = 0;
+    sources.forEach(source => {
+      const users = storeGet(source.storageKey) || source.defaults;
+      users.forEach(user => {
+        const revenueEUR = Number(user && user.revenue);
+        if (!isFinite(revenueEUR) || revenueEUR <= 0) return;
+        out.push({
+          key: source.label + '::' + String(user.handle || ('account ' + (colorIndex + 1))),
+          name: source.label + ' · ' + String(user.handle || 'Unnamed'),
+          amountCHF: revenueEUR / (exchangeRates.EUR || 1),
+          color: REVENUE_PALETTE[colorIndex % REVENUE_PALETTE.length]
+        });
+        colorIndex++;
+      });
+    });
+    const dropship = storeGet(DROPSHIP_KEY) || defaultDropship;
+    const dropshipRevenueEUR = Number(dropship.revenue);
+    if (isFinite(dropshipRevenueEUR) && dropshipRevenueEUR > 0) {
+      out.push({
+        key: 'dropship',
+        name: 'Dropship · Revenue',
+        amountCHF: dropshipRevenueEUR / (exchangeRates.EUR || 1),
+        color: '#F97316'
+      });
+    }
+    return out;
+  }
 
   // ============================================================
   // NET WORTH (copied from the main dashboard, verbatim logic)
@@ -3722,6 +3762,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       sliceTotals[cat.key] = sub;
       if (sub > 0) breakdown.push(cat.key + ': ' + fmtMoney(sub));
     });
+    const revenueAccounts = getRevenueAccounts();
+    const revenueTotal = revenueAccounts.reduce((sum, entry) => sum + (Number(entry.amountCHF) || 0), 0);
+    if (revenueTotal > 0) {
+      grand += revenueTotal;
+      sliceTotals.revenue = revenueTotal;
+      breakdown.push('Revenue: ' + fmtMoney(revenueTotal));
+    }
     if (netWorthTotal) netWorthTotal.textContent = fmtMoney(grand);
     if (netWorthBreakdown) netWorthBreakdown.textContent = breakdown.join('  •  ');
     logNetWorthSnapshot(grand);
@@ -3846,6 +3893,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
           });
         }
       });
+    });
+    const revenueAccounts = getRevenueAccounts();
+    revenueAccounts.forEach(entry => {
+      if (entry.amountCHF > 0) {
+        slices.push({
+          key: 'revenue::' + entry.key,
+          name: entry.name,
+          color: entry.color,
+          value: entry.amountCHF
+        });
+      }
     });
     // Subs annualized — one aggregate slice (no per-sub breakdown here).
     const subItems = storeGet('subs') || [];
