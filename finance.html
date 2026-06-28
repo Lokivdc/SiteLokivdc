@@ -3987,7 +3987,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
     legend.innerHTML = legendSlices.map(s => {
       const pct = ((s.value / sliceTotal) * 100).toFixed(1);
-      const promoted = s.key === legendPromotedKey ? ' is-promoted' : '';
+      const promoted = s.key === promotedKey ? ' is-promoted' : '';
       return '<div class="nw-leg' + promoted + '" data-slice-key="' + escapeHtml(s.key) + '" style="color:' + s.color + '">'
         + '<span class="nw-leg-dot" style="background:' + s.color + '"></span>'
         + '<span class="nw-leg-name">' + escapeHtml(s.name) + '</span>'
