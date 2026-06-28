@@ -3961,7 +3961,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       const a1 = angle + pad;
       const a2 = angle + sliceAngle - pad;
       if (a2 > a1) {
-        html += '<path d="' + donutArcPath(70, 70, 60, 44, a1, a2) + '" fill="' + s.color + '"></path>';
+        html += '<path d="' + donutArcPath(70, 70, 60, 44, a1, a2) + '" fill="' + s.color + '" data-slice-key="' + escapeHtml(s.key) + '"></path>';
       }
       angle += sliceAngle;
     });
@@ -3984,17 +3984,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         + '</div>';
     }).join('');
 
-    if (!legend.__nwLegendHoverWired) {
-      legend.__nwLegendHoverWired = true;
-      legend.addEventListener('pointerover', (e) => {
-        const item = e.target.closest('.nw-leg');
-        if (!item || !legend.contains(item)) return;
-        const key = item.dataset.sliceKey || '';
+    if (!svg.__nwDonutHoverWired) {
+      svg.__nwDonutHoverWired = true;
+      svg.addEventListener('pointermove', (e) => {
+        const path = e.target.closest('path[data-slice-key]');
+        const key = path ? path.dataset.sliceKey || '' : '';
         if (window.__nwLegendHoverKey === key) return;
         window.__nwLegendHoverKey = key;
         renderAllocationDonut(catTotals, grand);
       });
-      legend.addEventListener('pointerleave', () => {
+      svg.addEventListener('pointerleave', () => {
         if (!window.__nwLegendHoverKey) return;
         window.__nwLegendHoverKey = '';
         renderAllocationDonut(catTotals, grand);
